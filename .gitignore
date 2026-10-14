@@ -28,6 +28,7 @@ wheels/
 .coverage
 htmlcov/
 *.html
+!demo/*.html
 report.html
 test-results/
 screenshots/

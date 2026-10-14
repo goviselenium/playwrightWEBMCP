@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebMCP Reference Store & AI Portal</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #10b981;
+      --border: #334155;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 2rem;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 2rem;
+    }
+    h1 { font-size: 1.8rem; font-weight: 700; color: #60a5fa; }
+    .badge {
+      background: rgba(37, 99, 235, 0.2);
+      color: #93c5fd;
+      padding: 0.3rem 0.8rem;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      border: 1px solid #3b82f6;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+    }
+    .card h2 { font-size: 1.25rem; margin-bottom: 1rem; color: #e2e8f0; }
+    input, button, select, textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      border: 1px solid var(--border);
+      background: #090d16;
+      color: #fff;
+      margin-bottom: 0.75rem;
+      font-size: 0.95rem;
+    }
+    button {
+      background: var(--primary);
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: background 0.2s;
+    }
+    button:hover { background: var(--primary-hover); }
+    .btn-accent { background: var(--accent); }
+    .btn-accent:hover { background: #059669; }
+    pre {
+      background: #050811;
+      border: 1px solid var(--border);
+      padding: 1rem;
+      border-radius: 0.5rem;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      max-height: 220px;
+      color: #38bdf8;
+    }
+    #cart-status { font-weight: bold; color: var(--accent); margin-top: 0.5rem; }
+    footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header role="banner">
+    <div>
+      <h1>🚀 WebMCP AI Reference Store</h1>
+      <p style="color: var(--text-muted);">Native Web Model Context Protocol enabled web application</p>
+    </div>
+    <div>
+      <span class="badge" id="webmcp-indicator">WebMCP: ACTIVE</span>
+    </div>
+  </header>
+
+  <main role="main">
+    <div class="grid">
+      <!-- Catalog Search Card -->
+      <section class="card" aria-labelledby="heading-search">
+        <h2 id="heading-search">🔍 Catalog Search</h2>
+        <input type="text" id="search-input" placeholder="Search products (e.g., 'laptop', 'camera')" aria-label="Product Search Input">
+        <button id="search-btn" aria-label="Search Catalog Button">Search Catalog</button>
+        <pre id="search-results">// Search results will appear here...</pre>
+      </section>
+
+      <!-- Shipping Calculator Card -->
+      <section class="card" aria-labelledby="heading-shipping">
+        <h2 id="heading-shipping">📦 Shipping Calculator</h2>
+        <input type="text" id="zipcode-input" placeholder="Target Zip Code (e.g., 90210)" aria-label="Zip Code Input">
+        <input type="number" id="weight-input" placeholder="Weight in Kg (e.g., 2.5)" aria-label="Package Weight Input" step="0.1">
+        <button id="calc-shipping-btn" class="btn-accent" aria-label="Calculate Shipping Button">Estimate Shipping</button>
+        <pre id="shipping-results">// Shipping quotes will appear here...</pre>
+      </section>
+
+      <!-- Cart & Checkout Card -->
+      <section class="card" aria-labelledby="heading-cart">
+        <h2 id="heading-cart">🛒 Active Cart</h2>
+        <div id="cart-display">
+          <p>Total Items: <span id="cart-count">0</span></p>
+          <p>Cart Total: <span id="cart-total">$0.00</span></p>
+        </div>
+        <div style="margin-top: 1rem;">
+          <button id="add-sample-btn" aria-label="Add Sample Product">Add "AI Vision Camera" ($199)</button>
+          <button id="checkout-btn" style="background: #475569;" aria-label="Checkout Button">Proceed to Checkout</button>
+        </div>
+        <div id="cart-status" role="status">Cart is ready.</div>
+      </section>
+    </div>
+
+    <!-- Feedback Card -->
+    <section class="card" aria-labelledby="heading-feedback" style="max-width: 600px; margin: 0 auto;">
+      <h2 id="heading-feedback">💬 AI Agent & User Feedback</h2>
+      <select id="rating-select" aria-label="Rating Selection">
+        <option value="5">⭐⭐⭐⭐⭐ - 5 Stars</option>
+        <option value="4">⭐⭐⭐⭐ - 4 Stars</option>
+        <option value="3">⭐⭐⭐ - 3 Stars</option>
+        <option value="2">⭐⭐ - 2 Stars</option>
+        <option value="1">⭐ - 1 Star</option>
+      </select>
+      <textarea id="feedback-text" rows="3" placeholder="Enter comments or automated audit notes..." aria-label="Feedback Comments"></textarea>
+      <button id="submit-feedback-btn" aria-label="Submit Feedback Button">Submit Feedback</button>
+      <pre id="feedback-response">// Submission status...</pre>
+    </section>
+  </main>
+
+  <footer role="contentinfo">
+    <p>Playwright v1.64 WebMCP Automated Testing Target • Running in local context</p>
+  </footer>
+
+  <!-- WebMCP Registration Script -->
+  <script>
+    (function initWebMCP() {
+      // Mock catalog database
+      const CATALOG = [
+        { id: "PROD-101", name: "AI Neural Coprocessor", category: "Hardware", price: 299.99, inStock: true },
+        { id: "PROD-102", name: "AI Vision Camera 4K", category: "Hardware", price: 199.00, inStock: true },
+        { id: "PROD-103", name: "Autonomous Drone Kit", category: "Robotics", price: 549.50, inStock: false },
+        { id: "PROD-104", name: "WebMCP Developer License", category: "Software", price: 99.00, inStock: true }
+      ];
+
+      const state = {
+        cart: [],
+        feedbackLog: []
+      };
+
+      // 1. Core Tool Handlers
+      async function searchCatalogTool({ query, maxResults = 10 }) {
+        if (!query) return { results: CATALOG.slice(0, maxResults), total: CATALOG.length };
+        const q = String(query).toLowerCase();
+        const matches = CATALOG.filter(p => 
+          p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q)
+        ).slice(0, maxResults);
+        return { query, count: matches.length, results: matches };
+      }
+
+      async function calculateShippingTool({ zipcode, weightKg }) {
+        if (!zipcode) throw new Error("Zipcode parameter is required");
+        const weight = parseFloat(weightKg) || 1.0;
+        const baseRate = zipcode.startsWith("9") ? 12.50 : 8.75;
+        const totalCost = (baseRate + (weight * 2.25)).toFixed(2);
+        return {
+          zipcode,
+          weightKg: weight,
+          carrier: "Priority Autonomous Air",
+          costUSD: parseFloat(totalCost),
+          estimatedDays: 2
+        };
+      }
+
+      async function getCurrentCartTool() {
+        const total = state.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        return {
+          itemCount: state.cart.length,
+          items: state.cart,
+          totalUSD: parseFloat(total.toFixed(2))
+        };
+      }
+
+      async function addToCartTool({ productId, quantity = 1 }) {
+        const product = CATALOG.find(p => p.id === productId);
+        if (!product) throw new Error("Product ID not found: " + productId);
+        const qty = parseInt(quantity, 10) || 1;
+        const existing = state.cart.find(i => i.id === productId);
+        if (existing) {
+          existing.quantity += qty;
+        } else {
+          state.cart.push({ ...product, quantity: qty });
+        }
+        updateCartUI();
+        return await getCurrentCartTool();
+      }
+
+      async function submitFeedbackTool({ rating, comments }) {
+        const rate = parseInt(rating, 10) || 5;
+        const entry = {
+          id: "FB-" + Math.floor(Math.random() * 1000000),
+          rating: rate,
+          comments: String(comments || ""),
+          timestamp: new Date().toISOString()
+        };
+        state.feedbackLog.push(entry);
+        return { success: true, referenceId: entry.id, receivedAt: entry.timestamp };
+      }
+
+      // 2. Register WebMCP onto document.modelContext
+      document.modelContext = {
+        name: "WebMCP Reference Store",
+        version: "1.64.0",
+        description: "Official reference WebMCP implementation featuring catalog, cart, and shipping tools.",
+        capabilities: {
+          tools: true,
+          events: true
+        },
+        tools: [
+          {
+            name: "searchCatalog",
+            description: "Search product catalog by keyword and retrieve matching products with pricing.",
+            inputSchema: {
+              type: "object",
+              properties: {
+                query: { type: "string", description: "Search keyword" },
+                maxResults: { type: "integer", description: "Max results to return" }
+              },
+              required: ["query"]
+            },
+            execute: searchCatalogTool
+          },
+          {
+            name: "calculateShipping",
+            description: "Calculate delivery cost and transit days given delivery postal code and parcel weight.",
+            inputSchema: {
+              type: "object",
+              properties: {
+                zipcode: { type: "string", description: "Destination postal zip code" },
+                weightKg: { type: "number", description: "Weight of goods in kilograms" }
+              },
+              required: ["zipcode", "weightKg"]
+            },
+            execute: calculateShippingTool
+          },
+          {
+            name: "getCurrentCart",
+            description: "Retrieve items and total cost of user's active shopping cart.",
+            inputSchema: {
+              type: "object",
+              properties: {}
+            },
+            execute: getCurrentCartTool
+          },
+          {
+            name: "addToCart",
+            description: "Add a specific product catalog item to the shopping cart.",
+            inputSchema: {
+              type: "object",
+              properties: {
+                productId: { type: "string", description: "Catalog product ID" },
+                quantity: { type: "integer", description: "Number of units" }
+              },
+              required: ["productId"]
+            },
+            execute: addToCartTool
+          },
+          {
+            name: "submitFeedback",
+            description: "Submit rating and comments regarding user or AI experience.",
+            inputSchema: {
+              type: "object",
+              properties: {
+                rating: { type: "integer", description: "Rating score between 1 and 5" },
+                comments: { type: "string", description: "Feedback description or audit findings" }
+              },
+              required: ["rating"]
+            },
+            execute: submitFeedbackTool
+          }
+        ]
+      };
+
+      // Also mirror to window.modelContext for backwards compatibility
+      window.modelContext = document.modelContext;
+
+      // 3. UI Bindings
+      function updateCartUI() {
+        const count = state.cart.reduce((c, i) => c + i.quantity, 0);
+        const total = state.cart.reduce((s, i) => s + (i.price * i.quantity), 0);
+        document.getElementById("cart-count").innerText = count;
+        document.getElementById("cart-total").innerText = "$" + total.toFixed(2);
+        document.getElementById("cart-status").innerText = "Cart updated: " + count + " item(s).";
+      }
+
+      document.getElementById("search-btn").addEventListener("click", async () => {
+        const q = document.getElementById("search-input").value;
+        const res = await searchCatalogTool({ query: q });
+        document.getElementById("search-results").innerText = JSON.stringify(res, null, 2);
+      });
+
+      document.getElementById("calc-shipping-btn").addEventListener("click", async () => {
+        const zip = document.getElementById("zipcode-input").value || "90210";
+        const wt = document.getElementById("weight-input").value || "1.5";
+        try {
+          const res = await calculateShippingTool({ zipcode: zip, weightKg: parseFloat(wt) });
+          document.getElementById("shipping-results").innerText = JSON.stringify(res, null, 2);
+        } catch (e) {
+          document.getElementById("shipping-results").innerText = "Error: " + e.message;
+        }
+      });
+
+      document.getElementById("add-sample-btn").addEventListener("click", async () => {
+        await addToCartTool({ productId: "PROD-102", quantity: 1 });
+      });
+
+      document.getElementById("submit-feedback-btn").addEventListener("click", async () => {
+        const rating = parseInt(document.getElementById("rating-select").value, 10);
+        const text = document.getElementById("feedback-text").value;
+        const res = await submitFeedbackTool({ rating, comments: text });
+        document.getElementById("feedback-response").innerText = JSON.stringify(res, null, 2);
+      });
+
+      console.log("WebMCP successfully initialized on document.modelContext with 5 tools.");
+    })();
+  </script>
+</body>
+</html>
