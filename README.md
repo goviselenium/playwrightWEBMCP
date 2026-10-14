@@ -142,9 +142,8 @@ git commit -m "feat: init Playwright 1.64 WebMCP AI Autonomous Testing Framework
 
 ### 3. Connect to Remote GitHub Repository and Push
 ```bash
-# Replace with your actual GitHub repository URL
 git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/ai-playwright-webmcp-framework.git
+git remote add origin https://github.com/goviselenium/playwrightWEBMCP.git
 git push -u origin main
 ```
 
